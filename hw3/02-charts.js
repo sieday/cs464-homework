@@ -28,18 +28,44 @@ const borderColors = [
 
 // url for the Thrones API
 const url = 'https://thronesapi.com/api/v2/Characters';
+const section = document.querySelector('section');
 
-const renderChart = () => {
+fetch(url)
+  .then((response) => response.json())
+  .then((data) => {
+    const housesCounts = {};
+    const individualVals = [];
+    const houses = [];
+    const counts = [];
+    for (const character of data) {
+      houses.push(character.family);
+    }
+    houses.forEach(function (x) {
+      housesCounts[x] = (housesCounts[x] || 0) + 1;
+    });
+    console.log(housesCounts);
+    for (const key in housesCounts) {
+      const value = housesCounts[key];
+      individualVals.push(key);
+      counts.push(value);
+    }
+    console.log(counts);
+    console.log(individualVals);
+    renderChart(counts, individualVals);
+  })
+  .catch(console.error);
+
+const renderChart = (counts, labels) => {
   const donutChart = document.querySelector('.donut-chart');
 
   new Chart(donutChart, {
     type: 'doughnut',
     data: {
-      labels: ['label', 'label', 'label', 'label'],
+      labels: labels,
       datasets: [
         {
-          label: 'My First Dataset',
-          data: [1, 12, 33, 5],
+          label: 'Thrones Houses',
+          data: counts,
           backgroundColor: backgroundColors,
           borderColor: borderColors,
           borderWidth: 1,
